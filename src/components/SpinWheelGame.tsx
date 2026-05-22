@@ -31,15 +31,26 @@ const CATEGORIES: Record<string, string[]> = {
   ]
 };
 
+const sliceGradients = [
+  { start: '#FF2A6D', end: '#9B00E8' }, // Cyber Pink to Violet
+  { start: '#05D9E8', end: '#01012B' }, // Neon Sky to Midnight Blue
+  { start: '#FF9900', end: '#FF5E02' }, // Neon Mango to Fire Coral
+  { start: '#8E2DE2', end: '#4a00e0' }, // Electric Purple to Dark Indigo
+  { start: '#39FF14', end: '#007F10' }, // Toxic Lime to Emerald Green
+  { start: '#FF131A', end: '#8C0000' }, // High-energy Cherry Red to Maroon
+  { start: '#FF00CC', end: '#330066' }, // Magic Magenta to Violet
+  { start: '#12C2E9', end: '#F64F59' }  // Sunrise Teal & Rose
+];
+
 const vibrantColors = [
-  '#FF007F', // Bright Pink
-  '#00F5FF', // Cyan
-  '#FF8C00', // Deep Orange
-  '#A020F0', // Purple
-  '#39FF14', // Neon Green
-  '#FFD700', // Gold
-  '#FF1493', // Deep Pink
-  '#7B68EE'  // Medium Slate Blue
+  '#FF2A6D',
+  '#05D9E8',
+  '#FF9900',
+  '#8E2DE2',
+  '#39FF14',
+  '#FF131A',
+  '#FF00CC',
+  '#12C2E9'
 ];
 
 // Helper to generate uneven slices whose sum is exactly 360 degrees
@@ -427,50 +438,90 @@ export function SpinWheelGame({ onSaveDecision, onRequestSuggestions, isAiLoadin
       const startAngle = cumulativeAngle;
       const endAngle = cumulativeAngle + angle;
       
-      const x1 = 50 + 50 * Math.cos(Math.PI * startAngle / 180);
-      const y1 = 50 + 50 * Math.sin(Math.PI * startAngle / 180);
-      const x2 = 50 + 50 * Math.cos(Math.PI * endAngle / 180);
-      const y2 = 50 + 50 * Math.sin(Math.PI * endAngle / 180);
+      // Limit slices to a radius of 44 so that it leaves room for the beautiful golden bulb bezel on the outer rim (44 to 50)
+      const rOuter = 44;
+      const x1 = 50 + rOuter * Math.cos(Math.PI * startAngle / 180);
+      const y1 = 50 + rOuter * Math.sin(Math.PI * startAngle / 180);
+      const x2 = 50 + rOuter * Math.cos(Math.PI * endAngle / 180);
+      const y2 = 50 + rOuter * Math.sin(Math.PI * endAngle / 180);
       
       const largeArcFlag = angle > 180 ? 1 : 0;
-      const pathData = `M 50 50 L ${x1} ${y1} A 50 50 0 ${largeArcFlag} 1 ${x2} ${y2} Z`;
+      const pathData = `M 50 50 L ${x1} ${y1} A ${rOuter} ${rOuter} 0 ${largeArcFlag} 1 ${x2} ${y2} Z`;
 
-      const textAngle = startAngle + angle / 2;
-      const textRadius = 32;
-      const tx = 50 + textRadius * Math.cos(Math.PI * textAngle / 180);
-      const ty = 50 + textRadius * Math.sin(Math.PI * textAngle / 180);
+      // Determine starting/ending arc directions for curved text path
+      const textRadius = 31;
+      const tx1 = 50 + textRadius * Math.cos(Math.PI * startAngle / 180);
+      const ty1 = 50 + textRadius * Math.sin(Math.PI * startAngle / 180);
+      const tx2 = 50 + textRadius * Math.cos(Math.PI * endAngle / 180);
+      const ty2 = 50 + textRadius * Math.sin(Math.PI * endAngle / 180);
 
-      let textRotation = textAngle;
-      if (textAngle > 90 && textAngle < 270) {
-        textRotation += 180;
+      const midAngle = startAngle + angle / 2;
+      // If the middle of the slice is in the bottom hemisphere (e.g. 50 deg to 230 deg approximately) but let's draw standard upside-down rules
+      const isUpsideDown = midAngle > 50 && midAngle < 230;
+
+      let textPathData = '';
+      if (isUpsideDown) {
+        // Reverse standard clockwise drawing to make it go from right-to-left, making bottom text perfectly right-side-up!
+        textPathData = `M ${tx2} ${ty2} A ${textRadius} ${textRadius} 0 ${largeArcFlag} 0 ${tx1} ${ty1}`;
+      } else {
+        textPathData = `M ${tx1} ${ty1} A ${textRadius} ${textRadius} 0 ${largeArcFlag} 1 ${tx2} ${ty2}`;
       }
 
       let label = options[i] || '';
-      if (label.length > 10) label = label.substring(0, 8) + '..';
+      
+      // Truncate only if truly monstrously long
+      if (label.length > 20) {
+        label = label.substring(0, 18) + '...';
+      }
+
+      // Proportional font scaling: calculate available arc length inside slice and size text to fit perfectly
+      const arcLength = 0.54 * angle;
+      let fontSize = (arcLength * 0.75) / (Math.max(1, label.length) * 0.55);
+
+      // Clamp font size between 2.2px and 7.2px for clean legibility and superb fit
+      fontSize = Math.max(2.2, Math.min(7.2, fontSize));
 
       cumulativeAngle += angle;
 
       return (
         <React.Fragment key={i}>
+          {/* Main Pie Wedge Slice */}
           <path
             d={pathData}
             fill={vibrantColors[i % vibrantColors.length]}
-            stroke="white"
-            strokeWidth="0.25"
+            stroke="#131b2e"
+            strokeWidth="1.6"
+            className="transition-colors duration-200"
           />
+          
+          {/* Hidden helper element which text path snaps to follow the exact curved trajectory */}
+          <path
+            id={`wheel-text-path-${i}`}
+            d={textPathData}
+            fill="none"
+            stroke="none"
+          />
+
           <text
-            x={tx}
-            y={ty}
-            fill="white"
-            fontSize="7.125"
-            fontFamily="'Comic Sans MS', 'Comic Sans', cursive, sans-serif"
-            fontWeight="bold"
-            textAnchor="middle"
-            alignmentBaseline="middle"
-            transform={`rotate(${textRotation}, ${tx}, ${ty})`}
-            className="wheel-text select-none pointer-events-none"
+            dy={isUpsideDown ? "3.2" : "-0.4"}
+            className="select-none pointer-events-none fill-white uppercase tracking-wider"
+            style={{
+              fontFamily: 'var(--font-cartoon), "Comic Sans MS", cursive, sans-serif',
+              fontWeight: 900,
+              fontSize: `${fontSize}px`,
+              textShadow: '0px 1.5px 0px #131b2e, 0px 2px 4px rgba(0,0,0,0.4)',
+              paintOrder: 'stroke fill',
+              stroke: '#131b2e',
+              strokeWidth: '0.45px'
+            }}
           >
-            {label}
+            <textPath
+              href={`#wheel-text-path-${i}`}
+              startOffset="50%"
+              textAnchor="middle"
+            >
+              {label}
+            </textPath>
           </text>
         </React.Fragment>
       );
@@ -586,16 +637,49 @@ export function SpinWheelGame({ onSaveDecision, onRequestSuggestions, isAiLoadin
       {/* 3D Wheel Visual Stage with 100% increased size */}
       <div 
         style={{ perspective: '1200px', transformStyle: 'preserve-3d' }}
-        className="relative flex flex-col items-center justify-center mb-10"
+        className="relative flex flex-col items-center justify-center mb-10 mt-4"
       >
-        {/* Top Pointer - Enlarged */}
-        <div className="absolute -top-5 left-1/2 -translate-x-1/2 w-14 h-14 bg-on-surface rotate-45 z-20 rounded-xl shadow-xl border-4 border-white flex items-center justify-center">
-          <div className="w-3 h-3 bg-primary rounded-full"></div>
+        {/* Playful Spring-Loaded Top Pointer Peg */}
+        <div 
+          className={`absolute -top-6 left-1/2 -translate-x-1/2 z-30 w-12 h-16 drop-shadow-[0_6px_8px_rgba(0,0,0,0.35)] transition-transform origin-top ${
+            isSpinning ? 'animate-[peg-jiggle_0.12s_infinite]' : ''
+          }`}
+          style={{ transform: 'translateX(-50%)' }}
+        >
+          <svg viewBox="0 0 40 60" className="w-full h-full">
+            {/* Cartoon holder pin/bracket */}
+            <circle cx="20" cy="12" r="8" fill="#131b2e" />
+            <circle cx="20" cy="12" r="5" fill="#AEB3C2" stroke="#131b2e" strokeWidth="1.2" />
+            
+            {/* The Pointer Blade */}
+            <path 
+              d="M 11 12 L 29 12 L 26 46 L 20 54 L 14 46 Z" 
+              fill="#FF1493" 
+              stroke="#131b2e" 
+              strokeWidth="2.8" 
+              strokeLinejoin="round" 
+            />
+            {/* Highlight/Gloss on blade */}
+            <path 
+              d="M 14 15 L 18 15 L 17 44 L 15 44 Z" 
+              fill="#FFC0CB" 
+              opacity="0.65" 
+            />
+            {/* Central accent circle */}
+            <circle cx="20" cy="22" r="4.5" fill="#FFD700" stroke="#131b2e" strokeWidth="1.5" />
+          </svg>
         </div>
 
         {/* 3D Rotator Inner Container */}
-        <div style={{ transform: 'rotateX(12deg)', transformStyle: 'preserve-3d' }}>
-          <div ref={wheelRef} className="p-4 bg-white rounded-full shadow-[0px_24px_60px_rgba(70,72,212,0.18)] relative">
+        <div style={{ transform: 'rotateX(10deg)', transformStyle: 'preserve-3d' }}>
+          <div 
+            ref={wheelRef} 
+            className={`p-5 bg-white rounded-full relative transition-all duration-300 border-4 border-[#131b2e] ${
+              isSpinning ? 'animate-arcade-spin shadow-[0_16px_50px_rgba(70,72,212,0.3)]' : ''
+            } ${
+              showResult ? 'animate-victory-glow' : 'shadow-[0_16px_40px_rgba(15,23,42,0.18)]'
+            }`}
+          >
             <div
               className="w-[340px] h-[340px] md:w-[480px] md:h-[480px] rounded-full overflow-hidden relative"
               style={{
@@ -605,16 +689,66 @@ export function SpinWheelGame({ onSaveDecision, onRequestSuggestions, isAiLoadin
               }}
             >
               <svg viewBox="0 0 100 100" className="w-full h-full rotate-[0deg]">
+                <defs>
+                  {/* Linear gradients for each slice */}
+                  {sliceGradients.map((grad, idx) => (
+                    <linearGradient key={idx} id={`slice-grad-${idx}`} x1="0%" y1="0%" x2="0%" y2="100%">
+                      <stop offset="0%" stopColor={grad.start} />
+                      <stop offset="100%" stopColor={grad.end} />
+                    </linearGradient>
+                  ))}
+                  
+                  {/* 3D Glass overlay radial gradient */}
+                  <radialGradient id="wheel-gloss" cx="30%" cy="30%" r="65%">
+                    <stop offset="0%" stopColor="#ffffff" stopOpacity="0.45" />
+                    <stop offset="50%" stopColor="#ffffff" stopOpacity="0.05" />
+                    <stop offset="100%" stopColor="#000000" stopOpacity="0.32" />
+                  </radialGradient>
+                </defs>
+                
                 {renderSvgSlices()}
+                
+                {/* 3D Gloss bubble dome layer */}
+                <circle cx="50" cy="50" r="44" fill="url(#wheel-gloss)" pointerEvents="none" />
+                
+                {/* Outer Bezel (Slices end at radius 44. Outer Bezel is from radius 44 to 50) */}
+                <circle cx="50" cy="50" r="47" fill="none" stroke="#FFD700" strokeWidth="6" pointerEvents="none" />
+                
+                {/* Double cartoon stroke lineart */}
+                <circle cx="50" cy="50" r="44" fill="none" stroke="#131b2e" strokeWidth="0.8" pointerEvents="none" />
+                <circle cx="50" cy="50" r="50" fill="none" stroke="#131b2e" strokeWidth="0.8" pointerEvents="none" />
+                
+                {/* Flashing golden carnival bulbs */}
+                {Array.from({ length: 16 }).map((_, idx) => {
+                  const bAngle = (idx * 360) / 16;
+                  const bx = 50 + 47.0 * Math.cos(Math.PI * bAngle / 180);
+                  const by = 50 + 47.0 * Math.sin(Math.PI * bAngle / 180);
+                  const isBlinkingOn = isSpinning 
+                    ? (idx % 2 === Math.floor(rotation / 18) % 2) 
+                    : (idx % 2 === 0);
+                    
+                  return (
+                    <circle
+                      key={`bulb-${idx}`}
+                      cx={bx}
+                      cy={by}
+                      r="1.1"
+                      fill={isBlinkingOn ? '#FFF4A3' : '#F1A80A'}
+                      stroke="#131b2e"
+                      strokeWidth="0.3"
+                      pointerEvents="none"
+                    />
+                  );
+                })}
               </svg>
 
               {/* Gloss overlays to match elegant premium layout */}
               <div className="absolute inset-0 bg-gradient-to-tr from-white/5 to-transparent pointer-events-none rounded-full" />
             </div>
 
-            {/* Inner primary hub center cap representing core pivot */}
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-20 h-20 bg-white rounded-full z-10 shadow-lg flex items-center justify-center border-4 border-surface-variant/30">
-              <div className="w-10 h-10 bg-primary rounded-full flex items-center justify-center text-white font-bold text-2xl select-none pointer-events-none shadow-md">
+            {/* Inner primary hub center cap representing core pivot - styled like a premium golden arcade badge */}
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-16 h-16 bg-[#131b2e] rounded-full z-10 shadow-[0_6px_0px_rgba(0,0,0,0.3)] flex items-center justify-center border-4 border-[#131b2e]">
+              <div className="w-10 h-10 bg-amber-400 rounded-full flex items-center justify-center text-white font-bold text-2xl select-none pointer-events-none shadow-[inset_0_3px_0px_#fff,0_3px_0px_#cc9600] border-2 border-[#131b2e] animate-pulse">
                 ⭐
               </div>
             </div>
@@ -624,29 +758,6 @@ export function SpinWheelGame({ onSaveDecision, onRequestSuggestions, isAiLoadin
         {/* Shadow base floor mimicking volumetric presence - Enlarged */}
         <div className="w-[280px] md:w-[380px] h-6 bg-on-surface/5 rounded-[100%] mt-8 blur-lg mix-blend-multiply pointer-events-none" />
       </div>
-
-      {/* Dynamic item chips indicator with sector colors with 100% increased size */}
-      {options.length > 0 && (
-        <div className="flex flex-wrap justify-center gap-2.5 max-w-2xl mb-8">
-          {options.map((option, idx) => (
-            <div
-              key={idx}
-              className="bg-white hover:-translate-y-0.5 text-on-surface text-sm font-bold px-4.5 py-2 mt-1.5 rounded-full flex items-center gap-2.5 shadow-sm border border-outline-variant/30 transition-all duration-200"
-            >
-              <div className="w-4 h-4 rounded-full" style={{ backgroundColor: vibrantColors[idx % vibrantColors.length] }}></div>
-              <span className="truncate max-w-[160px]">{option} ({getWeight(idx)}%)</span>
-              <button
-                type="button"
-                onClick={() => handleRemoveOption(idx)}
-                disabled={isSpinning}
-                className="text-outline hover:text-error transition-colors p-0.5 focus:outline-none cursor-pointer disabled:opacity-30 disabled:pointer-events-none"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-          ))}
-        </div>
-      )}
 
       {/* Main Trigger Buttons with 100% increased size */}
       <div className="flex flex-col sm:flex-row items-center gap-4 w-full max-w-md z-12 pb-8">

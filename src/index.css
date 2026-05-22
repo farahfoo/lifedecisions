@@ -1,10 +1,11 @@
-@import url('https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=Manrope:wght@600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@600;900&family=Hanken+Grotesk:wght@400;500;600;700&family=Manrope:wght@600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
 @import "tailwindcss";
 
 @theme {
   --font-sans: "Hanken Grotesk", "Inter", sans-serif;
   --font-display: "Manrope", '"Hanken Grotesk"', sans-serif;
   --font-mono: "JetBrains Mono", monospace;
+  --font-cartoon: "Fredoka", "Comic Sans MS", cursive, sans-serif;
   
   --color-primary: #4648d4;
   --color-primary-container: #6063ee;
@@ -110,5 +111,35 @@ html {
 
 .animate-scan-line {
   animation: scan-line 2s linear infinite;
+}
+
+/* Arcade Gamified Wheel Animations */
+@keyframes arcade-bob {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.025); }
+}
+
+@keyframes arcade-glow {
+  0%, 100% { 
+    box-shadow: 0 0 20px rgba(70, 72, 212, 0.2), 0 10px 40px rgba(0,0,0,0.15), inset 0 0 0 4px #fff, inset 0 0 20px rgba(255, 255, 255, 0.3);
+  }
+  50% { 
+    box-shadow: 0 0 40px rgba(254, 86, 167, 0.6), 0 10px 40px rgba(0,0,0,0.25), inset 0 0 0 4px #fff, inset 0 0 30px rgba(254, 86, 167, 0.5);
+  }
+}
+
+.animate-arcade-spin {
+  animation: arcade-bob 0.8s ease-in-out infinite;
+}
+
+.animate-victory-glow {
+  animation: arcade-glow 1.5s ease-in-out infinite;
+  box-shadow: 0 0 20px rgba(70, 72, 212, 0.2), 0 10px 40px rgba(0,0,0,0.15), inset 0 0 0 4px #fff, inset 0 0 20px rgba(255, 255, 255, 0.3);
+}
+
+@keyframes peg-jiggle {
+  0%, 100% { transform: translateX(-50%) rotate(0deg); }
+  25% { transform: translateX(-50%) rotate(-10deg); }
+  75% { transform: translateX(-50%) rotate(10deg); }
 }
 
