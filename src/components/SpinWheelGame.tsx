@@ -462,13 +462,13 @@ export function SpinWheelGame({ onSaveDecision, onRequestSuggestions, isAiLoadin
             x={tx}
             y={ty}
             fill="white"
-            fontSize="9.5"
+            fontSize="7.125"
             fontFamily="'Comic Sans MS', 'Comic Sans', cursive, sans-serif"
             fontWeight="bold"
             textAnchor="middle"
             alignmentBaseline="middle"
             transform={`rotate(${textRotation}, ${tx}, ${ty})`}
-            className="select-none pointer-events-none"
+            className="wheel-text select-none pointer-events-none"
           >
             {label}
           </text>
