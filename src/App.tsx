@@ -26,6 +26,7 @@ import { LunchPollGame } from './components/LunchPollGame';
 import { TextTellGame } from './components/TextTellGame';
 import { HistoryPanel } from './components/HistoryPanel';
 import { ProfileLayout } from './components/ProfileLayout';
+import { TapFrenzyGame } from './components/TapFrenzyGame';
 import { supabase } from './lib/supabase';
 import { DisqusForum } from './components/DisqusForum';
 import { BouncingMagicalStar } from './components/BouncingMagicalStar';
@@ -246,6 +247,13 @@ export default function App() {
       desc: 'For resolving team munchie wars.',
       icon: '🍔',
       tag: 'Poll'
+    },
+    {
+      id: 'tap',
+      title: 'Tap Frenzy',
+      desc: 'Beat the clock for a daily shopping budget!',
+      icon: '⚡',
+      tag: 'Frenzy'
     }
   ];
 
@@ -418,6 +426,10 @@ export default function App() {
 
           {activeScreen === 'poll' && (
             <LunchPollGame onSaveDecision={handleSaveDecision} />
+          )}
+
+          {activeScreen === 'tap' && (
+            <TapFrenzyGame onSaveDecision={handleSaveDecision} />
           )}
 
           {activeScreen === 'text' && (

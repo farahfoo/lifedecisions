@@ -18,6 +18,7 @@ export function HistoryPanel({ history, onClearHistory, onSelectGame }: HistoryP
       case 'poll': return '📊';
       case 'vibe': return '🔮';
       case 'text': return '💬';
+      case 'tap': return '⚡';
       default: return '❓';
     }
   };
@@ -30,6 +31,7 @@ export function HistoryPanel({ history, onClearHistory, onSelectGame }: HistoryP
       case 'poll': return 'Lunch Roulette';
       case 'vibe': return 'Vibe Scanner';
       case 'text': return 'Excuse-o-Matic';
+      case 'tap': return 'Tap Frenzy';
       default: return 'Lucky spark';
     }
   };

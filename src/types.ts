@@ -6,6 +6,7 @@ export type GameType =
   | 'poll'
   | 'vibe'
   | 'text'
+  | 'tap'
   | 'history'
   | 'profile';
 
