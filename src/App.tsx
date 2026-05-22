@@ -27,12 +27,14 @@ import { TextTellGame } from './components/TextTellGame';
 import { HistoryPanel } from './components/HistoryPanel';
 import { ProfileLayout } from './components/ProfileLayout';
 import { supabase } from './lib/supabase';
+import { DiscussionEmbed } from 'disqus-react';
 
 export default function App() {
   const [activeScreen, setActiveScreen] = useState<GameType>('dashboard');
   const [searchQuery, setSearchQuery] = useState('');
   const [history, setHistory] = useState<DecisionHistoryEntry[]>([]);
   const [aiLoading, setAiLoading] = useState(false);
+  const [loadDisqus, setLoadDisqus] = useState(false);
 
   // Load initial history from Supabase on mount and bind to live channel events
   useEffect(() => {
@@ -446,6 +448,56 @@ export default function App() {
           </div>
         )}
       </main>
+
+      {/* Disqus Forum below all content sections, spanning full width */}
+      {activeScreen === 'dashboard' && (
+        <div id="disqus-forum-section" className="w-full bg-[#fcfcfd]/80 border-t border-outline-variant/10 px-6 md:px-12 py-12 pb-28 md:pb-16 text-on-surface">
+          <div className="max-w-2xl mx-auto w-full">
+            <div className="flex items-center gap-2 mb-6">
+              <span className="w-1.5 h-6 rounded-full bg-[#4648d4]" />
+              <h2 className="font-display font-black text-lg text-[#131b2e] tracking-tight">
+                Community Discussion
+              </h2>
+            </div>
+            
+            <div className="min-h-[250px] flex flex-col items-center justify-center border border-dashed border-[#4648d4]/15 rounded-2xl p-8 bg-white text-center shadow-xs">
+              {loadDisqus ? (
+                <div className="w-full">
+                  <DiscussionEmbed
+                    shortname="lifedecisions"
+                    config={{
+                      url: typeof window !== 'undefined' ? window.location.href : 'https://lifedecisions.example.com',
+                      identifier: 'lifedecisions-home-arcade',
+                      title: 'Life Decisions Arcade',
+                      language: 'zh_TW'
+                    }}
+                  />
+                </div>
+              ) : (
+                <div className="max-w-md my-4">
+                  <div className="w-12 h-12 bg-[#4648d4]/10 rounded-full flex items-center justify-center mx-auto mb-4 text-[#4648d4] text-xl">
+                    💬
+                  </div>
+                  <h3 className="font-sans font-bold text-sm text-[#131b2e] mb-1">Engage with other Decision Makers</h3>
+                  <p className="font-sans text-xs text-outline mb-4">
+                    Load the community forum to share your results, discuss strategies, and connect with other users.
+                  </p>
+                  <button
+                    onClick={() => setLoadDisqus(true)}
+                    className="px-5 py-2.5 bg-gradient-to-r from-primary to-[#4648d4] text-white font-sans font-bold text-[10px] uppercase tracking-wider rounded-lg shadow-sm hover:opacity-90 active:scale-95 transition-all cursor-pointer inline-flex items-center gap-2"
+                  >
+                    <span>Load Disqus Forum</span>
+                    <span className="text-xs">⚡</span>
+                  </button>
+                  <p className="text-[10px] text-outline/50 mt-4 text-center leading-relaxed">
+                    Note: This loads external scripts from Disqus. Comms may be limited in sandboxed development frame.
+                  </p>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Persistent Bottom Nav Menu from JSON (Mobile viewports only) */}
       <nav className="md:hidden fixed bottom-0 left-0 w-full flex justify-around items-center py-2.5 px-4 bg-white/80 border-t border-outline-variant/20 z-50 backdrop-blur-md shadow-[0px_-4px_20px_rgba(15,23,42,0.04)]">
