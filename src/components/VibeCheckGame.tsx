@@ -238,23 +238,32 @@ export function VibeCheckGame({ onSaveDecision }: VibeCheckGameProps) {
           {/* Facial alignment camera viewport */}
           <div className="relative w-60 h-60 rounded-2xl overflow-hidden bg-neutral-900 flex items-center justify-center border-2 border-primary/20 mb-4 animate-pulse">
             
-            {streamActive ? (
-              <video
-                ref={videoRef}
-                autoPlay
-                playsInline
-                muted
-                className="w-full h-full object-cover scale-x-[-1]"
-              />
-            ) : (
+            <video
+              ref={videoRef}
+              autoPlay
+              playsInline
+              muted
+              className={`w-full h-full object-cover scale-x-[-1] transition-opacity duration-300 ${streamActive ? 'opacity-100' : 'opacity-0 absolute pointer-events-none'}`}
+            />
+
+            {!streamActive && (
               <div className="absolute inset-0 bg-gradient-to-tr from-[#131131] via-[#200d3d] to-[#070b18] flex flex-col items-center justify-center text-center p-6 text-white">
                 <Sparkles className="w-8 h-8 text-pink-400 animate-pulse mb-2" />
                 <span className="text-[10px] font-bold tracking-widest uppercase text-pink-300">Cosmic Lens Active</span>
                 <p className="text-[9px] text-neutral-300 font-sans mt-2 max-w-[190px] leading-relaxed">
-                  {cameraError ? "Hardware scanner offline. Press button below to capture standard high-fidelity portrait." : "Seeking biometric laser connection to personal webcam..."}
+                  {cameraError ? "Hardware scanner offline. Clicking 'Capture' below will instantly scan using custom aesthetic presets." : "Seeking biometric laser connection to personal webcam..."}
                 </p>
                 {!cameraError && (
                   <div className="w-4 h-4 border-2 border-t-pink-400 border-white/20 rounded-full animate-spin mt-3"></div>
+                )}
+                {cameraError && (
+                  <button
+                    onClick={startCamera}
+                    type="button"
+                    className="mt-3 px-3 py-1 bg-white/10 hover:bg-white/20 active:scale-95 text-[10px] font-semibold text-white uppercase tracking-wider rounded-lg border border-white/15 transition-all cursor-pointer"
+                  >
+                    Retry Hardware Lens
+                  </button>
                 )}
               </div>
             )}

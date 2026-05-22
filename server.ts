@@ -16,10 +16,10 @@ let aiClient: GoogleGenAI | null = null;
 
 function getAiClient(): GoogleGenAI | null {
   if (!aiClient) {
-    const key = process.env.GEMINI_API_KEY;
+    const key = process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY;
     if (key && key !== 'MY_GEMINI_API_KEY' && key.trim() !== '') {
       aiClient = new GoogleGenAI({
-        apiKey: key,
+        apiKey: key.trim(),
         httpOptions: {
           headers: {
             'User-Agent': 'aistudio-build',
