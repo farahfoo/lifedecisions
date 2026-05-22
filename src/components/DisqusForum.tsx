@@ -11,13 +11,9 @@ interface DisqusForumProps {
 }
 
 export function DisqusForum({ shortname, config }: DisqusForumProps) {
-  const [loadDisqus, setLoadDisqus] = useState(false);
-  const [loadingScript, setLoadingScript] = useState(false);
+  const [loadingScript, setLoadingScript] = useState(true);
 
   useEffect(() => {
-    if (!loadDisqus) return;
-    setLoadingScript(true);
-
     const loadDisqusScript = () => {
       // Set the global window disqus_config object
       (window as any).disqus_config = function (this: any) {
@@ -74,7 +70,7 @@ export function DisqusForum({ shortname, config }: DisqusForumProps) {
     // Load after brief animation delay to prevent main thread blocking
     const timer = setTimeout(loadDisqusScript, 100);
     return () => clearTimeout(timer);
-  }, [loadDisqus, shortname, config]);
+  }, [shortname, config]);
 
   return (
     <div id="disqus-forum-section" className="w-full bg-[#fcfcfd]/80 border-t border-outline-variant/10 px-6 md:px-12 py-12 pb-28 md:pb-16 text-on-surface">
@@ -86,39 +82,15 @@ export function DisqusForum({ shortname, config }: DisqusForumProps) {
           </h2>
         </div>
 
-        <div className="min-h-[250px] flex flex-col items-center justify-center border border-dashed border-[#4648d4]/15 rounded-2xl p-8 bg-white text-center shadow-xs">
-          {loadDisqus ? (
-            <div className="w-full relative">
-              {loadingScript && (
-                <div className="absolute inset-0 flex flex-col items-center justify-center bg-white/90 z-10 py-12">
-                  <div className="w-6 h-6 border-2 border-t-[#4648d4] border-gray-200 rounded-full animate-spin mb-2" />
-                  <span className="text-[10px] text-outline font-semibold uppercase tracking-wider">Connecting Forum...</span>
-                </div>
-              )}
-              {/* Actual target element Disqus injects into */}
-              <div id="disqus_thread" className="w-full"></div>
-            </div>
-          ) : (
-            <div className="max-w-md my-4">
-              <div className="w-12 h-12 bg-[#4648d4]/10 rounded-full flex items-center justify-center mx-auto mb-4 text-[#4648d4] text-xl">
-                💬
-              </div>
-              <h3 className="font-sans font-bold text-sm text-[#131b2e] mb-1">Engage with other Decision Makers</h3>
-              <p className="font-sans text-xs text-outline mb-4">
-                Load the community forum to share your results, discuss strategies, and connect with other users.
-              </p>
-              <button
-                onClick={() => setLoadDisqus(true)}
-                className="px-5 py-2.5 bg-gradient-to-r from-primary to-[#4648d4] text-white font-sans font-bold text-[10px] uppercase tracking-wider rounded-lg shadow-sm hover:opacity-90 active:scale-95 transition-all cursor-pointer inline-flex items-center gap-2"
-              >
-                <span>Load Disqus Forum</span>
-                <span className="text-xs">⚡</span>
-              </button>
-              <p className="text-[10px] text-outline/50 mt-4 text-center leading-relaxed">
-                Note: This loads external scripts from Disqus. Comms may be limited in sandboxed development frame.
-              </p>
+        <div className="min-h-[250px] w-full relative bg-white border border-outline-variant/20 rounded-2xl p-6 shadow-xs">
+          {loadingScript && (
+            <div className="absolute inset-0 flex flex-col items-center justify-center bg-white/95 z-10 rounded-2xl py-12">
+              <div className="w-6 h-6 border-2 border-t-[#4648d4] border-gray-200 rounded-full animate-spin mb-2" />
+              <span className="text-[10px] text-outline font-semibold uppercase tracking-wider">Connecting Forum...</span>
             </div>
           )}
+          {/* Actual target element Disqus injects into */}
+          <div id="disqus_thread" className="w-full"></div>
         </div>
       </div>
     </div>
