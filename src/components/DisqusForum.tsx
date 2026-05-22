@@ -11,6 +11,7 @@ interface DisqusForumProps {
 }
 
 export function DisqusForum({ shortname, config }: DisqusForumProps) {
+  const [language, setLanguage] = useState<'en' | 'zh_TW'>('en');
   const [loadingScript, setLoadingScript] = useState(true);
 
   useEffect(() => {
@@ -20,22 +21,27 @@ export function DisqusForum({ shortname, config }: DisqusForumProps) {
         this.page.url = config.url;
         this.page.identifier = config.identifier;
         this.page.title = config.title;
-        this.language = config.language;
+        this.language = language;
       };
 
       // Check if global DISQUS object is already loaded
       if ((window as any).DISQUS) {
         try {
+          setLoadingScript(true);
           (window as any).DISQUS.reset({
             reload: true,
             config: function (this: any) {
               this.page.url = config.url;
               this.page.identifier = config.identifier;
               this.page.title = config.title;
-              this.language = config.language;
+              this.language = language;
             }
           });
-          setLoadingScript(false);
+          // Small timeout to simulate loading completion smoothly
+          const loadTimer = setTimeout(() => {
+            setLoadingScript(false);
+          }, 600);
+          return () => clearTimeout(loadTimer);
         } catch (e) {
           console.error("Error resetting Disqus forum", e);
           setLoadingScript(false);
@@ -70,16 +76,41 @@ export function DisqusForum({ shortname, config }: DisqusForumProps) {
     // Load after brief animation delay to prevent main thread blocking
     const timer = setTimeout(loadDisqusScript, 100);
     return () => clearTimeout(timer);
-  }, [shortname, config]);
+  }, [shortname, config, language]);
 
   return (
-    <div id="disqus-forum-section" className="w-full bg-[#fcfcfd]/80 border-t border-outline-variant/10 px-6 md:px-12 py-12 pb-28 md:pb-16 text-on-surface">
+    <div id="disqus-forum-section" className="w-full bg-[#fcfcfd]/80 border-t border-outline-variant/10 px-6 md:px-12 py-12 pb-28 md:pb-16 text-on-surface w-full">
       <div className="max-w-2xl mx-auto w-full">
-        <div className="flex items-center gap-2 mb-6">
-          <span className="w-1.5 h-6 rounded-full bg-[#4648d4]" />
-          <h2 className="font-display font-black text-lg text-[#131b2e] tracking-tight">
-            Community Discussion
-          </h2>
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+          <div className="flex items-center gap-2">
+            <span className="w-1.5 h-6 rounded-full bg-[#4648d4]" />
+            <h2 className="font-display font-black text-lg text-[#131b2e] tracking-tight">
+              Community Discussion
+            </h2>
+          </div>
+          
+          <div className="flex items-center gap-1.5 bg-surface-container-low p-1.5 rounded-xl border border-outline-variant/20 shadow-2xs">
+            <button
+              onClick={() => setLanguage('en')}
+              className={`px-3 py-1.5 rounded-lg font-sans text-xs font-bold transition-all duration-200 cursor-pointer ${
+                language === 'en'
+                  ? 'bg-primary text-white shadow-xs'
+                  : 'text-outline hover:text-on-surface hover:bg-surface-container/50'
+              }`}
+            >
+              English
+            </button>
+            <button
+              onClick={() => setLanguage('zh_TW')}
+              className={`px-3 py-1.5 rounded-lg font-sans text-xs font-bold transition-all duration-200 cursor-pointer ${
+                language === 'zh_TW'
+                  ? 'bg-primary text-white shadow-xs'
+                  : 'text-outline hover:text-on-surface hover:bg-surface-container/50'
+              }`}
+            >
+              繁體中文 (Chinese)
+            </button>
+          </div>
         </div>
 
         <div className="min-h-[250px] w-full relative bg-white border border-outline-variant/20 rounded-2xl p-6 shadow-xs">

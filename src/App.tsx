@@ -456,7 +456,7 @@ export default function App() {
             url: typeof window !== 'undefined' ? window.location.href : 'https://lifedecisions.example.com',
             identifier: 'lifedecisions-home-arcade',
             title: 'Life Decisions Arcade',
-            language: 'zh_TW'
+            language: 'en'
           }}
         />
       )}
