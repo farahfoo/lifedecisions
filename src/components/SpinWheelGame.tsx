@@ -462,7 +462,7 @@ export function SpinWheelGame({ onSaveDecision, onRequestSuggestions, isAiLoadin
             x={tx}
             y={ty}
             fill="white"
-            fontSize="5.2"
+            fontSize="9.5"
             fontFamily="'Comic Sans MS', 'Comic Sans', cursive, sans-serif"
             fontWeight="bold"
             textAnchor="middle"
@@ -478,27 +478,27 @@ export function SpinWheelGame({ onSaveDecision, onRequestSuggestions, isAiLoadin
   };
 
   return (
-    <div className="w-full max-w-2xl mx-auto flex flex-col items-center select-none">
+    <div className="w-full max-w-3xl mx-auto flex flex-col items-center select-none text-lg">
       {/* Particle Overlay Canvases */}
       <canvas ref={confettiCanvasRef} className="fixed inset-0 pointer-events-none z-50 w-full h-full" />
 
-      {/* Title Header */}
-      <div className="text-center mb-6">
-        <span className="font-sans font-semibold text-[11px] tracking-wider text-primary uppercase">Quick Spark</span>
-        <h2 className="font-display font-bold text-2xl text-on-surface mt-0.5">Let Fate Decide</h2>
-        <p className="font-sans text-xs text-on-surface-variant max-w-md mx-auto mt-1 leading-relaxed">
+      {/* Title Header with 100% increased size */}
+      <div className="text-center mb-8">
+        <span className="font-sans font-semibold text-lg tracking-wider text-primary uppercase">Quick Spark</span>
+        <h2 className="font-display font-bold text-4xl md:text-5xl text-on-surface mt-1">Let Fate Decide</h2>
+        <p className="font-sans text-base md:text-lg text-on-surface-variant max-w-lg mx-auto mt-2 leading-relaxed">
           Choose a category below or add custom priorities, and watch fortune settle!
         </p>
       </div>
 
-      {/* Preset Category Tabs */}
-      <div className="w-full max-w-md overflow-x-auto flex gap-2 justify-center pb-4 mb-4 z-10 px-1 scrollbar-none">
+      {/* Preset Category Tabs with 100% increased size */}
+      <div className="w-full max-w-xl overflow-x-auto flex gap-3 justify-center pb-5 mb-5 z-10 px-2 scrollbar-none">
         {Object.keys(CATEGORIES).map((cat) => (
           <button
             key={cat}
             onClick={() => !isSpinning && loadCategory(cat)}
             disabled={isSpinning}
-            className={`whitespace-nowrap px-5 py-2 rounded-full font-label-md text-[13px] font-bold transition-all duration-200 border-2 cursor-pointer ${
+            className={`whitespace-nowrap px-8 py-3 rounded-full font-label-md text-base md:text-lg font-bold transition-all duration-200 border-2 cursor-pointer ${
               activeCategory === cat
                 ? 'border-primary bg-primary text-white shadow-md'
                 : 'border-outline-variant/30 bg-white text-on-surface-variant hover:border-primary/50'
@@ -509,47 +509,47 @@ export function SpinWheelGame({ onSaveDecision, onRequestSuggestions, isAiLoadin
         ))}
       </div>
 
-      {/* Custom options configuration slot */}
-      <div className="w-full bg-surface-container-lowest rounded-2xl p-4 border border-outline-variant/30 shadow-[0px_4px_20px_rgba(15,23,42,0.03)] mb-6 transition-all duration-300 hover:shadow-md">
-        <h3 className="font-display font-bold text-xs text-on-surface mb-2.5 flex items-center justify-between">
+      {/* Custom options configuration slot with 100% increased size */}
+      <div className="w-full bg-surface-container-lowest rounded-3xl p-6 border border-outline-variant/30 shadow-md mb-8 transition-all duration-300 hover:shadow-lg">
+        <h3 className="font-display font-bold text-base md:text-lg text-on-surface mb-4 flex items-center justify-between">
           <span>Customise your options:</span>
-          <span className="text-[10px] font-mono font-medium text-primary bg-primary/5 px-2 py-0.5 rounded-full">
+          <span className="text-sm font-mono font-medium text-primary bg-primary/5 px-3 py-1 rounded-full">
             {options.length} choices active
           </span>
         </h3>
 
-        <form onSubmit={(e) => { e.preventDefault(); handleAddOption(); }} className="flex gap-2">
+        <form onSubmit={(e) => { e.preventDefault(); handleAddOption(); }} className="flex gap-3">
           <div className="relative flex-1">
-            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-outline">
-              <Plus className="w-3.5 h-3.5" />
+            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-outline">
+              <Plus className="w-6 h-6" />
             </span>
             <input
               type="text"
               value={newOption}
               onChange={(e) => setNewOption(e.target.value)}
               disabled={isSpinning}
-              className="w-full bg-surface-container-low border-0 outline-none rounded-xl py-2 pl-9 pr-3 font-sans text-xs text-on-surface placeholder:text-outline focus:ring-2 focus:ring-primary focus:bg-white transition-all duration-300"
+              className="w-full bg-surface-container-low border-0 outline-none rounded-2xl py-3.5 pl-12 pr-4 font-sans text-sm md:text-base text-on-surface placeholder:text-outline focus:ring-2 focus:ring-primary focus:bg-white transition-all duration-300"
               placeholder="Type custom choices directly..."
             />
           </div>
           <button
             type="submit"
             disabled={isSpinning}
-            className="bg-primary hover:bg-tertiary disabled:opacity-50 active:scale-95 text-white font-sans font-semibold text-xs px-4 py-2 rounded-xl transition-all duration-300 flex items-center gap-1 shadow-sm cursor-pointer"
+            className="bg-primary hover:bg-tertiary disabled:opacity-50 active:scale-95 text-white font-sans font-bold text-base px-6 py-3.5 rounded-2xl transition-all duration-300 flex items-center gap-1.5 shadow-md cursor-pointer"
           >
             <span>Add</span>
           </button>
         </form>
 
-        <div className="flex flex-wrap gap-2 gap-y-3 mt-3">
+        <div className="flex flex-wrap gap-3 gap-y-4 mt-4">
           <button
             type="button"
             onClick={handleShuffleWeights}
             disabled={isSpinning || options.length < 2}
-            className="text-[10px] font-semibold text-outline hover:text-[#4648d4] disabled:opacity-50 transition-colors flex items-center gap-1 py-0.5 px-2 rounded-lg hover:bg-primary/5 cursor-pointer"
+            className="text-xs md:text-sm font-bold text-outline hover:text-[#4648d4] disabled:opacity-50 transition-colors flex items-center gap-1.5 py-1.5 px-3.5 rounded-xl hover:bg-primary/5 cursor-pointer"
             title="Randomize slice portions with uneven probabilities"
           >
-            <Dices className="w-3 h-3 text-[#4648d4]" />
+            <Dices className="w-5 h-5 text-[#4648d4]" />
             <span>Shuffle Slices 🎲</span>
           </button>
           
@@ -558,9 +558,9 @@ export function SpinWheelGame({ onSaveDecision, onRequestSuggestions, isAiLoadin
               type="button"
               disabled={isAiLoading || isSpinning}
               onClick={handleSuggestAiOptions}
-              className="text-[10px] font-semibold text-outline hover:text-tertiary transition-colors flex items-center gap-1 py-0.5 px-2 rounded-lg hover:bg-tertiary/5 disabled:opacity-50 cursor-pointer"
+              className="text-xs md:text-sm font-bold text-outline hover:text-tertiary transition-colors flex items-center gap-1.5 py-1.5 px-3.5 rounded-xl hover:bg-tertiary/5 disabled:opacity-50 cursor-pointer"
             >
-              <Wand2 className="w-3 h-3" />
+              <Wand2 className="w-5 h-5" />
               <span>{isAiLoading ? 'AI Generating...' : 'Suggest AI Options'}</span>
             </button>
           )}
@@ -569,35 +569,35 @@ export function SpinWheelGame({ onSaveDecision, onRequestSuggestions, isAiLoadin
             type="button"
             onClick={handleClearAll}
             disabled={isSpinning}
-            className="text-[10px] font-semibold text-outline hover:text-error disabled:opacity-50 transition-colors ml-auto py-0.5 px-2 border border-dashed border-outline-variant/50 rounded-lg hover:bg-error/5 cursor-pointer"
+            className="text-xs md:text-sm font-bold text-outline hover:text-error disabled:opacity-50 transition-colors ml-auto py-1.5 px-3.5 border border-dashed border-outline-variant/50 rounded-xl hover:bg-error/5 cursor-pointer"
           >
             Clear All
           </button>
         </div>
 
         {aiError && (
-          <div className="mt-2.5 py-1.5 px-3 bg-red-50 text-red-700 text-[11px] rounded-lg flex items-center gap-1.5 w-full">
-            <AlertTriangle className="w-3 h-3 flex-shrink-0" />
+          <div className="mt-3.5 py-2.5 px-4 bg-red-50 text-red-700 text-xs md:text-sm rounded-xl flex items-center gap-2 w-full">
+            <AlertTriangle className="w-4 h-4 flex-shrink-0" />
             <span>{aiError}</span>
           </div>
         )}
       </div>
 
-      {/* 3D Wheel Visual Stage */}
+      {/* 3D Wheel Visual Stage with 100% increased size */}
       <div 
         style={{ perspective: '1200px', transformStyle: 'preserve-3d' }}
-        className="relative flex flex-col items-center justify-center mb-6"
+        className="relative flex flex-col items-center justify-center mb-10"
       >
-        {/* Top Pointer */}
-        <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 w-8 h-8 bg-on-surface rotate-45 z-20 rounded-md shadow-lg border-2 border-white flex items-center justify-center">
-          <div className="w-1.5 h-1.5 bg-primary rounded-full"></div>
+        {/* Top Pointer - Enlarged */}
+        <div className="absolute -top-5 left-1/2 -translate-x-1/2 w-14 h-14 bg-on-surface rotate-45 z-20 rounded-xl shadow-xl border-4 border-white flex items-center justify-center">
+          <div className="w-3 h-3 bg-primary rounded-full"></div>
         </div>
 
         {/* 3D Rotator Inner Container */}
         <div style={{ transform: 'rotateX(12deg)', transformStyle: 'preserve-3d' }}>
-          <div ref={wheelRef} className="p-3 bg-white rounded-full shadow-[0px_20px_50px_rgba(70,72,212,0.14)] relative">
+          <div ref={wheelRef} className="p-4 bg-white rounded-full shadow-[0px_24px_60px_rgba(70,72,212,0.18)] relative">
             <div
-              className="w-[260px] h-[260px] md:w-[320px] md:h-[320px] rounded-full overflow-hidden relative"
+              className="w-[340px] h-[340px] md:w-[480px] md:h-[480px] rounded-full overflow-hidden relative"
               style={{
                 transform: `rotate(${rotation}deg)`,
                 transition: isSpinning ? 'transform 3.5s cubic-bezier(0.1, 0.7, 0.1, 1)' : 'none',
@@ -612,83 +612,83 @@ export function SpinWheelGame({ onSaveDecision, onRequestSuggestions, isAiLoadin
               <div className="absolute inset-0 bg-gradient-to-tr from-white/5 to-transparent pointer-events-none rounded-full" />
             </div>
 
-            {/* Inner golden hub cap representing core pivot */}
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-12 h-12 bg-white rounded-full z-10 shadow-md flex items-center justify-center border-4 border-surface-variant/30">
-              <div className="w-6 h-6 bg-primary rounded-full flex items-center justify-center text-white font-bold text-xs select-none pointer-events-none shadow-sm">
+            {/* Inner primary hub center cap representing core pivot */}
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-20 h-20 bg-white rounded-full z-10 shadow-lg flex items-center justify-center border-4 border-surface-variant/30">
+              <div className="w-10 h-10 bg-primary rounded-full flex items-center justify-center text-white font-bold text-2xl select-none pointer-events-none shadow-md">
                 ⭐
               </div>
             </div>
           </div>
         </div>
 
-        {/* Shadow base floor mimicking volumetric presence */}
-        <div className="w-[200px] md:w-[260px] h-4 bg-on-surface/5 rounded-[100%] mt-5 blur-md mix-blend-multiply pointer-events-none" />
+        {/* Shadow base floor mimicking volumetric presence - Enlarged */}
+        <div className="w-[280px] md:w-[380px] h-6 bg-on-surface/5 rounded-[100%] mt-8 blur-lg mix-blend-multiply pointer-events-none" />
       </div>
 
-      {/* Dynamic item chips indicator with sector colors */}
+      {/* Dynamic item chips indicator with sector colors with 100% increased size */}
       {options.length > 0 && (
-        <div className="flex flex-wrap justify-center gap-1.5 max-w-xl mb-6">
+        <div className="flex flex-wrap justify-center gap-2.5 max-w-2xl mb-8">
           {options.map((option, idx) => (
             <div
               key={idx}
-              className="bg-white hover:-translate-y-0.5 text-on-surface text-[11px] font-semibold px-3 py-1.5 rounded-full flex items-center gap-1.5 shadow-sm border border-outline-variant/30 transition-all duration-200"
+              className="bg-white hover:-translate-y-0.5 text-on-surface text-sm font-bold px-4.5 py-2 mt-1.5 rounded-full flex items-center gap-2.5 shadow-sm border border-outline-variant/30 transition-all duration-200"
             >
-              <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: vibrantColors[idx % vibrantColors.length] }}></div>
-              <span className="truncate max-w-[124px]">{option} ({getWeight(idx)}%)</span>
+              <div className="w-4 h-4 rounded-full" style={{ backgroundColor: vibrantColors[idx % vibrantColors.length] }}></div>
+              <span className="truncate max-w-[160px]">{option} ({getWeight(idx)}%)</span>
               <button
                 type="button"
                 onClick={() => handleRemoveOption(idx)}
                 disabled={isSpinning}
                 className="text-outline hover:text-error transition-colors p-0.5 focus:outline-none cursor-pointer disabled:opacity-30 disabled:pointer-events-none"
               >
-                <X className="w-3 h-3" />
+                <X className="w-5 h-5" />
               </button>
             </div>
           ))}
         </div>
       )}
 
-      {/* Main Trigger Buttons */}
-      <div className="flex flex-col sm:flex-row items-center gap-3 w-full max-w-md z-12 pb-6">
+      {/* Main Trigger Buttons with 100% increased size */}
+      <div className="flex flex-col sm:flex-row items-center gap-4 w-full max-w-md z-12 pb-8">
         <button
           onClick={handleSpin}
           disabled={isSpinning || options.length < 2}
-          className="w-full flex-1 bg-primary hover:bg-tertiary disabled:opacity-50 text-white font-label-md text-sm py-4 rounded-xl shadow-lg active:scale-95 transition-all duration-200 flex items-center justify-center gap-2 hover:opacity-95 cursor-pointer font-bold uppercase tracking-wider"
+          className="w-full flex-1 bg-primary hover:bg-tertiary disabled:opacity-50 text-white font-label-md text-xl py-5 rounded-2xl shadow-xl active:scale-95 transition-all duration-200 flex items-center justify-center gap-3 hover:opacity-95 cursor-pointer font-bold uppercase tracking-wider px-10"
         >
-          <Sparkles className="w-4 h-4 text-white animate-pulse" />
+          <Sparkles className="w-7 h-7 text-white animate-pulse" />
           <span>{isSpinning ? 'Spinnin...' : 'Spin to Decide'}</span>
         </button>
 
         <button
           onClick={handleReset}
           disabled={isSpinning}
-          className="w-full sm:w-auto px-8 py-4 border-2 border-outline-variant/30 hover:border-primary text-on-surface-variant hover:text-primary font-label-md text-sm font-bold uppercase tracking-wider rounded-xl bg-white shadow-sm hover:bg-surface-container-low active:scale-95 transition-all duration-200 cursor-pointer"
+          className="w-full sm:w-auto px-12 py-5 border-2 border-outline-variant/30 hover:border-primary text-on-surface-variant hover:text-primary font-label-md text-xl font-bold uppercase tracking-wider rounded-2xl bg-white shadow-md hover:bg-surface-container-low active:scale-95 transition-all duration-200 cursor-pointer"
         >
           Reset
         </button>
       </div>
 
-      {/* Winner Modal overlay cards */}
+      {/* Winner Modal overlay cards with 100% increased size */}
       {showResult && winningIndex !== null && (
-        <div className="w-full max-w-md bg-gradient-to-br from-white to-[#faf8ff] rounded-2xl p-6 border-2 border-primary/20 shadow-md animate-float flex flex-col items-center text-center relative overflow-hidden mt-2 z-10">
-          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary via-tertiary to-secondary"></div>
+        <div className="w-full max-w-xl bg-gradient-to-br from-white to-[#faf8ff] rounded-3xl p-10 border-2 border-primary/20 shadow-xl animate-float flex flex-col items-center text-center relative overflow-hidden mt-4 z-10">
+          <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-primary via-tertiary to-secondary"></div>
           
-          <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center text-primary mb-3 text-lg">
+          <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center text-primary mb-4 text-3xl">
             🎉
           </div>
 
-          <span className="text-[10px] font-bold text-outline uppercase tracking-widest font-mono">FATE CHOSEN SUCCESS</span>
-          <h4 className="font-display font-extrabold text-2xl text-[#121633] mt-1 px-4 leading-snug">
+          <span className="text-sm font-bold text-outline uppercase tracking-widest font-mono">FATE CHOSEN SUCCESS</span>
+          <h4 className="font-display font-extrabold text-4xl text-[#121633] mt-2 px-4 leading-snug">
             {options[winningIndex]}
           </h4>
           
-          <p className="text-xs text-on-surface-variant font-sans mt-2 max-w-xs px-3 leading-relaxed">
+          <p className="text-base text-on-surface-variant font-sans mt-3 max-w-md px-3 leading-relaxed">
             "The magical wheel has spoken! Take action with high-fidelity, and enjoy the adventure!"
           </p>
 
           <button
             onClick={() => setShowResult(false)}
-            className="mt-4 bg-primary/10 hover:bg-primary/20 text-primary px-5 py-1.5 rounded-lg text-xs font-semibold transition-all focus:outline-none cursor-pointer"
+            className="mt-6 bg-primary/10 hover:bg-primary/20 text-primary px-8 py-3 rounded-xl text-base font-bold transition-all focus:outline-none cursor-pointer"
           >
             Accept Fate
           </button>

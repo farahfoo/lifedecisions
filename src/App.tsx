@@ -28,6 +28,7 @@ import { HistoryPanel } from './components/HistoryPanel';
 import { ProfileLayout } from './components/ProfileLayout';
 import { supabase } from './lib/supabase';
 import { DisqusForum } from './components/DisqusForum';
+import { BouncingMagicalStar } from './components/BouncingMagicalStar';
 
 export default function App() {
   const [activeScreen, setActiveScreen] = useState<GameType>('dashboard');
@@ -255,141 +256,144 @@ export default function App() {
   );
 
   return (
-    <div className="bg-surface text-on-surface font-sans min-h-screen flex flex-col antialiased selection:bg-primary-container selection:text-white pb-16 md:pb-6">
+    <div className="bg-surface text-on-surface font-sans min-h-screen flex flex-col antialiased selection:bg-primary-container selection:text-white pb-24 md:pb-12 text-lg">
       
-      {/* Dynamic Header Block */}
-      <header className="fixed top-0 w-full h-14 z-50 backdrop-blur-md bg-surface/80 border-b border-outline-variant/10 flex items-center justify-between px-6 md:px-12 py-2 shadow-xs">
-        <div className="flex items-center gap-3">
+      {/* Dynamic Header Block with 100% increased size */}
+      <header className="fixed top-0 w-full h-20 z-50 backdrop-blur-md bg-surface/80 border-b border-outline-variant/10 flex items-center justify-between px-6 md:px-12 py-3 shadow-md">
+        <div className="flex items-center gap-4">
           {activeScreen !== 'dashboard' && (
             <button
               onClick={() => setActiveScreen('dashboard')}
-              className="text-primary hover:bg-[#4648d4]/5 p-2 rounded-full transition-colors focus:outline-none"
+              className="text-primary hover:bg-[#4648d4]/5 p-3 rounded-full transition-colors focus:outline-none"
               title="Back to dashboard"
             >
-              <ArrowLeft className="w-5 h-5" />
+              <ArrowLeft className="w-8 h-8" />
             </button>
           )}
 
-          <div className="flex items-center gap-1.5 cursor-pointer" onClick={() => setActiveScreen('dashboard')}>
-            <span className="w-6 h-6 rounded bg-primary flex items-center justify-center text-xs text-white uppercase tracking-wider font-display font-black shadow-xs">S</span>
-            <span className="font-display font-extrabold text-[#131b2e] tracking-tight text-base">Arcade</span>
+          <div className="flex items-center gap-3 cursor-pointer" onClick={() => setActiveScreen('dashboard')}>
+            <span className="w-10 h-10 rounded-lg bg-primary flex items-center justify-center text-xl text-white uppercase tracking-wider font-display font-black shadow-md">S</span>
+            <span className="font-display font-extrabold text-[#131b2e] tracking-tight text-2xl">Arcade</span>
           </div>
         </div>
 
-        {/* Responsive Desktop nav options - Icons + One-word text only */}
-        <nav className="hidden md:flex items-center gap-2">
+        {/* Responsive Desktop nav options with 100% increased size */}
+        <nav className="hidden md:flex items-center gap-3">
           <button
             onClick={() => setActiveScreen('dashboard')}
-            className={`flex items-center gap-1 font-sans font-extrabold text-xs py-1.5 px-3 rounded-xl transition-all ${
+            className={`flex items-center gap-2 font-sans font-extrabold text-base py-2.5 px-5 rounded-2xl transition-all ${
               activeScreen === 'dashboard' 
                 ? 'bg-primary-container/10 text-primary' 
                 : 'text-outline hover:text-on-surface'
             }`}
           >
-            <Compass className="w-3.5 h-3.5" />
+            <Compass className="w-6 h-6" />
             <span>Playground</span>
           </button>
           <button
             onClick={() => setActiveScreen('history')}
-            className={`flex items-center gap-1 font-sans font-extrabold text-xs py-1.5 px-3 rounded-xl transition-all ${
+            className={`flex items-center gap-2 font-sans font-extrabold text-base py-2.5 px-5 rounded-2xl transition-all ${
               activeScreen === 'history' 
                 ? 'bg-primary-container/10 text-primary' 
                 : 'text-outline hover:text-on-surface'
             }`}
           >
-            <History className="w-3.5 h-3.5" />
+            <History className="w-6 h-6" />
             <span>History</span>
           </button>
           <button
             onClick={() => setActiveScreen('profile')}
-            className={`flex items-center gap-1 font-sans font-extrabold text-xs py-1.5 px-3 rounded-xl transition-all ${
+            className={`flex items-center gap-2 font-sans font-extrabold text-base py-2.5 px-5 rounded-2xl transition-all ${
               activeScreen === 'profile' 
                 ? 'bg-primary-container/10 text-primary' 
                 : 'text-outline hover:text-on-surface'
             }`}
           >
-            <User className="w-3.5 h-3.5" />
+            <User className="w-6 h-6" />
             <span>Profile</span>
           </button>
         </nav>
       </header>
 
       {/* Main Canvas layout container */}
-      <main className="flex-grow pt-16 px-6 md:px-12 max-w-2xl mx-auto w-full flex flex-col justify-between">
+      <main className="flex-grow pt-24 px-6 md:px-12 max-w-4xl mx-auto w-full flex flex-col justify-between">
         
         {/* Render View Controller switcher */}
         <div className="w-full h-full flex flex-col justify-center">
           {activeScreen === 'dashboard' && (
-            <div className="space-y-4 pb-4 transition-opacity duration-300">
-              
-              {/* Cover Banner title */}
-              <div className="text-center py-1">
-                <span className="font-sans font-semibold text-[10px] tracking-wider text-primary uppercase flex items-center justify-center gap-1">
-                  <Flame className="w-3.5 h-3.5 text-[#4648d4] animate-pulse" />
-                  <span>Interactive Chance Engine</span>
-                </span>
-                <h1 className="font-display font-black text-2xl text-[#131b2e] leading-tight tracking-tight mt-0.5">
-                  Spark Arcade
-                </h1>
-                <p className="font-sans text-xs text-on-surface-variant max-w-md mx-auto mt-0.5 leading-relaxed">
-                  Beautiful probability dashboards, magical coin models, and biometric scanning algorithms in a high-density, click-focused playground.
-                </p>
+            <>
+              <BouncingMagicalStar />
+              <div className="space-y-6 pb-6 transition-opacity duration-300">
                 
-                {/* Search bar alignment option */}
-                <div className="relative max-w-xs mx-auto mt-2.5">
-                  <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-outline" />
-                  <input
-                    type="text"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder="Search arcade..."
-                    className="w-full bg-white border border-outline-variant/30 rounded-full py-1.5 pl-8 pr-4 font-sans text-xs text-on-surface placeholder:text-outline focus:ring-2 focus:ring-primary focus:bg-white focus:outline-none shadow-xs transition-shadow"
-                  />
-                </div>
-              </div>
-
-              {/* Bento Compartment list groups - Icon Grid Form only, minimize scrolling, one-word titles */}
-              {searchQuery && filteredGrid.length === 0 ? (
-                <div className="text-center py-6 p-4 bg-white border border-dashed border-outline-variant/30 rounded-2xl">
-                  <HelpCircle className="w-5 h-5 text-outline mx-auto mb-1" />
-                  <h4 className="font-display font-semibold text-xs text-on-surface">No apps found</h4>
-                </div>
-              ) : (
-                <div className="bg-white border border-outline-variant/20 rounded-3xl p-6 shadow-xs">
-                  <div className="grid grid-cols-3 gap-6 max-w-md mx-auto">
-                    {filteredGrid.map((card) => (
-                      <div
-                        key={card.id}
-                        onClick={() => setActiveScreen(card.id as any)}
-                        className="flex flex-col items-center justify-center group cursor-pointer text-center"
-                        title={card.desc}
-                      >
-                        {/* Circle Icon Container */}
-                        <div className="w-16 h-16 rounded-full bg-surface-container-low border-2 border-outline-variant/10 group-hover:border-primary/30 group-hover:bg-[#eaedff] flex items-center justify-center text-3xl group-hover:scale-110 group-hover:rotate-6 shadow-xs transition-all duration-300">
-                          {card.icon}
-                        </div>
-                        
-                        {/* One-word Title */}
-                        <span className="font-display font-black text-xs text-[#131b2e] group-hover:text-primary mt-2 transition-colors">
-                          {card.tag}
-                        </span>
-
-                        {/* High-density visual indicator of mini-app role */}
-                        <span className="text-[9px] text-outline font-sans mt-0.5 line-clamp-1 max-w-[80px] opacity-75">
-                          {card.desc.split(" ").slice(-2).join(" ")}
-                        </span>
-                      </div>
-                    ))}
+                {/* Cover Banner title with 100% increased font/icon sizes */}
+                <div className="text-center py-2">
+                  <span className="font-sans font-semibold text-base tracking-wider text-primary uppercase flex items-center justify-center gap-2 mb-2">
+                    <Flame className="w-7 h-7 text-[#4648d4] animate-pulse" />
+                    <span>Interactive Chance Engine</span>
+                  </span>
+                  <h1 className="font-display font-black text-5xl md:text-6xl text-[#131b2e] leading-tight tracking-tight mt-1">
+                    Spark Arcade
+                  </h1>
+                  <p className="font-sans text-base md:text-lg text-on-surface-variant max-w-xl mx-auto mt-2 leading-relaxed opacity-90">
+                    Beautiful probability dashboards, magical coin models, and biometric scanning algorithms in a high-density, click-focused playground.
+                  </p>
+                  
+                  {/* Search bar alignment option with 100% increased size */}
+                  <div className="relative max-w-md mx-auto mt-4 px-2">
+                    <Search className="w-6 h-6 absolute left-6 top-1/2 -translate-y-1/2 text-outline" />
+                    <input
+                      type="text"
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      placeholder="Search arcade..."
+                      className="w-full bg-white border border-outline-variant/30 rounded-full py-3.5 pl-14 pr-6 font-sans text-base text-on-surface placeholder:text-outline focus:ring-4 focus:ring-primary/20 focus:bg-white focus:outline-none shadow-md transition-shadow"
+                    />
                   </div>
                 </div>
-              )}
 
-              {/* Intertwined elegant AdSense slot to minimize scrolling */}
-              <div className="py-1">
-                <AdSenseBanner />
+                {/* Bento Compartment list groups - Upgraded size by 100% */}
+                {searchQuery && filteredGrid.length === 0 ? (
+                  <div className="text-center py-10 p-6 bg-white border border-dashed border-outline-variant/30 rounded-3xl">
+                    <HelpCircle className="w-10 h-10 text-outline mx-auto mb-2" />
+                    <h4 className="font-display font-semibold text-lg text-on-surface">No apps found</h4>
+                  </div>
+                ) : (
+                  <div className="bg-white border border-outline-variant/20 rounded-3xl p-8 shadow-md">
+                    <div className="grid grid-cols-3 gap-8 md:gap-12 max-w-2xl mx-auto">
+                      {filteredGrid.map((card) => (
+                        <div
+                          key={card.id}
+                          onClick={() => setActiveScreen(card.id as any)}
+                          className="flex flex-col items-center justify-center group cursor-pointer text-center"
+                          title={card.desc}
+                        >
+                          {/* Circle Icon Container - Expanded by 100% */}
+                          <div className="w-24 h-24 md:w-28 md:h-28 rounded-full bg-surface-container-low border-2 border-outline-variant/10 group-hover:border-primary/30 group-hover:bg-[#eaedff] flex items-center justify-center text-5xl md:text-6xl group-hover:scale-110 group-hover:rotate-6 shadow-md transition-all duration-300">
+                            {card.icon}
+                          </div>
+                          
+                          {/* One-word Title */}
+                          <span className="font-display font-black text-lg md:text-xl text-[#131b2e] group-hover:text-primary mt-3 transition-colors">
+                            {card.tag}
+                          </span>
+
+                          {/* High-density visual indicator of mini-app role */}
+                          <span className="text-[11px] md:text-xs text-outline font-sans mt-1 line-clamp-1 max-w-[120px] opacity-75">
+                            {card.desc.split(" ").slice(-2).join(" ")}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Intertwined elegant AdSense slot to minimize scrolling */}
+                <div className="py-2">
+                  <AdSenseBanner />
+                </div>
+
               </div>
-
-            </div>
+            </>
           )}
 
           {activeScreen === 'wheel' && (
@@ -461,42 +465,42 @@ export default function App() {
         />
       )}
 
-      {/* Persistent Bottom Nav Menu from JSON (Mobile viewports only) */}
-      <nav className="md:hidden fixed bottom-0 left-0 w-full flex justify-around items-center py-2.5 px-4 bg-white/80 border-t border-outline-variant/20 z-50 backdrop-blur-md shadow-[0px_-4px_20px_rgba(15,23,42,0.04)]">
+      {/* Persistent Bottom Nav Menu from JSON (Mobile viewports only) - 100% taller with doubled touch targets and fonts */}
+      <nav className="md:hidden fixed bottom-0 left-0 w-full flex justify-around items-center py-4 px-6 bg-white/90 border-t border-outline-variant/20 z-50 backdrop-blur-md shadow-[0px_-8px_30px_rgba(15,23,42,0.06)]">
         <button
           onClick={() => setActiveScreen('dashboard')}
-          className={`flex flex-col items-center justify-center px-4 py-1.5 rounded-xl transition-all duration-200 active:scale-95 ${
+          className={`flex flex-col items-center justify-center px-6 py-2.5 rounded-2xl transition-all duration-200 active:scale-95 ${
             activeScreen === 'dashboard' || (activeScreen !== 'history' && activeScreen !== 'profile')
               ? 'bg-primary/10 text-primary'
               : 'text-outline hover:text-on-surface'
           }`}
         >
-          <Compass className="w-5 h-5" />
-          <span className="font-sans font-bold text-[10px] mt-0.5">Home</span>
+          <Compass className="w-10 h-10 animate-pulse" />
+          <span className="font-sans font-extrabold text-sm mt-1.5">Home</span>
         </button>
 
         <button
           onClick={() => setActiveScreen('history')}
-          className={`flex flex-col items-center justify-center px-4 py-1.5 rounded-xl transition-all duration-200 active:scale-95 ${
+          className={`flex flex-col items-center justify-center px-6 py-2.5 rounded-2xl transition-all duration-200 active:scale-95 ${
             activeScreen === 'history'
               ? 'bg-primary/10 text-primary'
               : 'text-outline hover:text-on-surface'
           }`}
         >
-          <History className="w-5 h-5" />
-          <span className="font-sans font-bold text-[10px] mt-0.5">History</span>
+          <History className="w-10 h-10" />
+          <span className="font-sans font-extrabold text-sm mt-1.5">History</span>
         </button>
 
         <button
           onClick={() => setActiveScreen('profile')}
-          className={`flex flex-col items-center justify-center px-4 py-1.5 rounded-xl transition-all duration-200 active:scale-95 ${
+          className={`flex flex-col items-center justify-center px-6 py-2.5 rounded-2xl transition-all duration-200 active:scale-95 ${
             activeScreen === 'profile'
               ? 'bg-primary/10 text-primary'
               : 'text-outline hover:text-on-surface'
           }`}
         >
-          <User className="w-5 h-5" />
-          <span className="font-sans font-bold text-[10px] mt-0.5">Profile</span>
+          <User className="w-10 h-10" />
+          <span className="font-sans font-extrabold text-sm mt-1.5">Profile</span>
         </button>
       </nav>
     </div>

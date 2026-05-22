@@ -15,6 +15,10 @@ export function DisqusForum({ shortname, config }: DisqusForumProps) {
   const [loadingScript, setLoadingScript] = useState(true);
 
   useEffect(() => {
+    let isMounted = true;
+    let loadTimer: NodeJS.Timeout | null = null;
+    let initTimer: NodeJS.Timeout | null = null;
+
     const loadDisqusScript = () => {
       // Set the global window disqus_config object
       (window as any).disqus_config = function (this: any) {
@@ -38,13 +42,16 @@ export function DisqusForum({ shortname, config }: DisqusForumProps) {
             }
           });
           // Small timeout to simulate loading completion smoothly
-          const loadTimer = setTimeout(() => {
-            setLoadingScript(false);
+          loadTimer = setTimeout(() => {
+            if (isMounted) {
+              setLoadingScript(false);
+            }
           }, 600);
-          return () => clearTimeout(loadTimer);
         } catch (e) {
           console.error("Error resetting Disqus forum", e);
-          setLoadingScript(false);
+          if (isMounted) {
+            setLoadingScript(false);
+          }
         }
         return;
       }
@@ -60,22 +67,33 @@ export function DisqusForum({ shortname, config }: DisqusForumProps) {
         script.async = true;
         
         script.onload = () => {
-          setLoadingScript(false);
+          if (isMounted) {
+            setLoadingScript(false);
+          }
         };
         script.onerror = () => {
           console.error("Disqus script failed to load. Likely blocked or offline.");
-          setLoadingScript(false);
+          if (isMounted) {
+            setLoadingScript(false);
+          }
         };
 
         document.body.appendChild(script);
       } else {
-        setLoadingScript(false);
+        if (isMounted) {
+          setLoadingScript(false);
+        }
       }
     };
 
     // Load after brief animation delay to prevent main thread blocking
-    const timer = setTimeout(loadDisqusScript, 100);
-    return () => clearTimeout(timer);
+    initTimer = setTimeout(loadDisqusScript, 100);
+
+    return () => {
+      isMounted = false;
+      if (initTimer) clearTimeout(initTimer);
+      if (loadTimer) clearTimeout(loadTimer);
+    };
   }, [shortname, config, language]);
 
   return (
