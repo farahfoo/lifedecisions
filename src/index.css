@@ -62,6 +62,10 @@
   --color-on-background: #131b2e;
 }
 
+html {
+  font-size: 112.5%; /* Scales all rem-based typography by 1 step throughout the application */
+}
+
 @layer utilities {
   .wheel-shadow {
     box-shadow: 0px 12px 40px rgba(15, 23, 42, 0.12), inset 0px 0px 0px 8px #ffffff;

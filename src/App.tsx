@@ -256,24 +256,24 @@ export default function App() {
   );
 
   return (
-    <div className="bg-surface text-on-surface font-sans min-h-screen flex flex-col antialiased selection:bg-primary-container selection:text-white pb-24 md:pb-12 text-lg">
+    <div className="bg-surface text-on-surface font-sans min-h-screen flex flex-col antialiased selection:bg-primary-container selection:text-white pb-24 md:pb-12 text-xl">
       
-      {/* Dynamic Header Block with 100% increased size */}
-      <header className="fixed top-0 w-full h-20 z-50 backdrop-blur-md bg-surface/80 border-b border-outline-variant/10 flex items-center justify-between px-6 md:px-12 py-3 shadow-md">
-        <div className="flex items-center gap-4">
+      {/* Dynamic Header Block - Thinner on mobile (reduced 25% in height & padding) */}
+      <header className="fixed top-0 w-full h-[60px] md:h-20 z-50 backdrop-blur-md bg-surface/80 border-b border-outline-variant/10 flex items-center justify-between px-6 md:px-12 py-2 md:py-3 shadow-md">
+        <div className="flex items-center gap-3 md:gap-4">
           {activeScreen !== 'dashboard' && (
             <button
               onClick={() => setActiveScreen('dashboard')}
-              className="text-primary hover:bg-[#4648d4]/5 p-3 rounded-full transition-colors focus:outline-none"
+              className="text-primary hover:bg-[#4648d4]/5 p-2 md:p-3 rounded-full transition-colors focus:outline-none"
               title="Back to dashboard"
             >
-              <ArrowLeft className="w-8 h-8" />
+              <ArrowLeft className="w-6 h-6 md:w-8 md:h-8" />
             </button>
           )}
 
-          <div className="flex items-center gap-3 cursor-pointer" onClick={() => setActiveScreen('dashboard')}>
-            <span className="w-10 h-10 rounded-lg bg-primary flex items-center justify-center text-xl text-white uppercase tracking-wider font-display font-black shadow-md">S</span>
-            <span className="font-display font-extrabold text-[#131b2e] tracking-tight text-2xl">Arcade</span>
+          <div className="flex items-center gap-2 md:gap-3 cursor-pointer" onClick={() => setActiveScreen('dashboard')}>
+            <span className="w-7.5 h-7.5 md:w-10 md:h-10 rounded bg-primary flex items-center justify-center text-sm md:text-xl text-white uppercase tracking-wider font-display font-black shadow-md">S</span>
+            <span className="font-display font-extrabold text-[#131b2e] tracking-tight text-lg md:text-2xl">Arcade</span>
           </div>
         </div>
 
@@ -315,8 +315,8 @@ export default function App() {
         </nav>
       </header>
 
-      {/* Main Canvas layout container */}
-      <main className="flex-grow pt-24 px-6 md:px-12 max-w-4xl mx-auto w-full flex flex-col justify-between">
+      {/* Main Canvas layout container - Balanced upper padding for thinner mobile header bar */}
+      <main className="flex-grow pt-[80px] md:pt-24 px-6 md:px-12 max-w-4xl mx-auto w-full flex flex-col justify-between">
         
         {/* Render View Controller switcher */}
         <div className="w-full h-full flex flex-col justify-center">
@@ -367,18 +367,18 @@ export default function App() {
                           className="flex flex-col items-center justify-center group cursor-pointer text-center"
                           title={card.desc}
                         >
-                          {/* Circle Icon Container - Expanded by 100% */}
-                          <div className="w-24 h-24 md:w-28 md:h-28 rounded-full bg-surface-container-low border-2 border-outline-variant/10 group-hover:border-primary/30 group-hover:bg-[#eaedff] flex items-center justify-center text-5xl md:text-6xl group-hover:scale-110 group-hover:rotate-6 shadow-md transition-all duration-300">
+                          {/* Circle Icon Container - Reduced by another 5% */}
+                          <div className="w-[76px] h-[76px] md:w-[91px] md:h-[91px] rounded-full bg-surface-container-low border-2 border-outline-variant/10 group-hover:border-primary/30 group-hover:bg-[#eaedff] flex items-center justify-center text-3xl md:text-4xl group-hover:scale-110 group-hover:rotate-6 shadow-md transition-all duration-300">
                             {card.icon}
                           </div>
                           
-                          {/* One-word Title */}
-                          <span className="font-display font-black text-lg md:text-xl text-[#131b2e] group-hover:text-primary mt-3 transition-colors">
+                          {/* One-word Title - Reduced by another 5% */}
+                          <span className="font-display font-black text-[13px] md:text-base text-[#131b2e] group-hover:text-primary mt-2 transition-colors">
                             {card.tag}
                           </span>
 
                           {/* High-density visual indicator of mini-app role */}
-                          <span className="text-[11px] md:text-xs text-outline font-sans mt-1 line-clamp-1 max-w-[120px] opacity-75">
+                          <span className="text-[9.5px] md:text-[10px] text-outline font-sans mt-0.5 line-clamp-1 max-w-[95px] opacity-75">
                             {card.desc.split(" ").slice(-2).join(" ")}
                           </span>
                         </div>
@@ -465,42 +465,42 @@ export default function App() {
         />
       )}
 
-      {/* Persistent Bottom Nav Menu from JSON (Mobile viewports only) - 100% taller with doubled touch targets and fonts */}
-      <nav className="md:hidden fixed bottom-0 left-0 w-full flex justify-around items-center py-4 px-6 bg-white/90 border-t border-outline-variant/20 z-50 backdrop-blur-md shadow-[0px_-8px_30px_rgba(15,23,42,0.06)]">
+      {/* Persistent Bottom Nav Menu from JSON (Mobile viewports only) - Scaled down an additional 10% to optimize height and spacing */}
+      <nav className="md:hidden fixed bottom-0 left-0 w-full flex justify-around items-center py-2 px-4 bg-white/90 border-t border-outline-variant/20 z-50 backdrop-blur-md shadow-[0px_-5px_18px_rgba(15,23,42,0.04)]">
         <button
           onClick={() => setActiveScreen('dashboard')}
-          className={`flex flex-col items-center justify-center px-6 py-2.5 rounded-2xl transition-all duration-200 active:scale-95 ${
+          className={`flex flex-col items-center justify-center px-3.5 py-1.5 rounded-xl transition-all duration-200 active:scale-95 ${
             activeScreen === 'dashboard' || (activeScreen !== 'history' && activeScreen !== 'profile')
               ? 'bg-primary/10 text-primary'
               : 'text-outline hover:text-on-surface'
           }`}
         >
-          <Compass className="w-10 h-10 animate-pulse" />
-          <span className="font-sans font-extrabold text-sm mt-1.5">Home</span>
+          <Compass className="w-[25px] h-[25px] animate-pulse" />
+          <span className="font-sans font-extrabold text-[10px] mt-0.5">Home</span>
         </button>
 
         <button
           onClick={() => setActiveScreen('history')}
-          className={`flex flex-col items-center justify-center px-6 py-2.5 rounded-2xl transition-all duration-200 active:scale-95 ${
+          className={`flex flex-col items-center justify-center px-3.5 py-1.5 rounded-xl transition-all duration-200 active:scale-95 ${
             activeScreen === 'history'
               ? 'bg-primary/10 text-primary'
               : 'text-outline hover:text-on-surface'
           }`}
         >
-          <History className="w-10 h-10" />
-          <span className="font-sans font-extrabold text-sm mt-1.5">History</span>
+          <History className="w-[25px] h-[25px]" />
+          <span className="font-sans font-extrabold text-[10px] mt-0.5">History</span>
         </button>
 
         <button
           onClick={() => setActiveScreen('profile')}
-          className={`flex flex-col items-center justify-center px-6 py-2.5 rounded-2xl transition-all duration-200 active:scale-95 ${
+          className={`flex flex-col items-center justify-center px-3.5 py-1.5 rounded-xl transition-all duration-200 active:scale-95 ${
             activeScreen === 'profile'
               ? 'bg-primary/10 text-primary'
               : 'text-outline hover:text-on-surface'
           }`}
         >
-          <User className="w-10 h-10" />
-          <span className="font-sans font-extrabold text-sm mt-1.5">Profile</span>
+          <User className="w-[25px] h-[25px]" />
+          <span className="font-sans font-extrabold text-[10px] mt-0.5">Profile</span>
         </button>
       </nav>
     </div>

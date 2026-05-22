@@ -24,9 +24,9 @@ export function BouncingMagicalStar() {
     window.addEventListener('resize', handleResize);
     handleResize();
 
-    // Randomize initial starting velocity slightly to be distinct
-    stateRef.current.vx = (Math.random() > 0.5 ? 1 : -1) * (0.3 + Math.random() * 0.4);
-    stateRef.current.vy = (Math.random() > 0.5 ? 1 : -1) * (0.3 + Math.random() * 0.4);
+    // Randomize initial starting velocity slightly to be distinct (25% faster)
+    stateRef.current.vx = (Math.random() > 0.5 ? 1 : -1) * (0.3 + Math.random() * 0.4) * 1.25;
+    stateRef.current.vy = (Math.random() > 0.5 ? 1 : -1) * (0.3 + Math.random() * 0.4) * 1.25;
     // Initial position
     stateRef.current.x = Math.random() * (stateRef.current.width - 150) + 50;
     stateRef.current.y = Math.random() * (stateRef.current.height - 150) + 50;
@@ -120,7 +120,7 @@ export function BouncingMagicalStar() {
       {/* 3 render-behind mini trail stars */}
       {miniStars}
 
-      {/* Primary interactive glowing bounding star sparkle */}
+      {/* Primary interactive glowing bouncing star (5 corners) */}
       <div
         style={{
           position: 'fixed',
@@ -133,8 +133,8 @@ export function BouncingMagicalStar() {
         }}
         className="text-yellow-400 drop-shadow-[0_0_20px_rgba(234,179,8,0.9)] flex items-center justify-center"
       >
-        <Sparkle 
-          size={48} 
+        <Star 
+          size={52} 
           className="fill-yellow-400 stroke-yellow-500 animate-[spin_10s_linear_infinite]"
         />
       </div>
