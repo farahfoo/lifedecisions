@@ -40,7 +40,7 @@ export function ProfileLayout({ history, userEmail, localTime, onClearAllUserDat
       flower: 'Magic Flower Daisy',
       poll: 'Lunch Roulette',
       vibe: 'Vibe Scanner',
-      text: 'Chat Sparker'
+      text: 'Excuse-o-Matic'
     };
     return toolAliases[sorted[0][0]] || sorted[0][0];
   };

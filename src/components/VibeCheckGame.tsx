@@ -69,21 +69,71 @@ export function VibeCheckGame({ onSaveDecision }: VibeCheckGameProps) {
   const startCamera = async () => {
     setCameraError(null);
     try {
-      if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-        const stream = await navigator.mediaDevices.getUserMedia({
-          video: { width: 400, height: 400, facingMode: 'user' }
-        });
-        streamRef.current = stream;
-        if (videoRef.current) {
-          videoRef.current.srcObject = stream;
+      if (typeof navigator !== 'undefined' && navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+        let stream: MediaStream | null = null;
+
+        // Attempt 1: Modern ideal mobile-friendly constraints (using ideal width/height avoids mobile OverconstrainedError)
+        try {
+          stream = await navigator.mediaDevices.getUserMedia({
+            video: {
+              facingMode: 'user',
+              width: { ideal: 640 },
+              height: { ideal: 480 }
+            },
+            audio: false
+          });
+        } catch (firstErr) {
+          console.warn("Attempt 1 with ideal constraints failed. Trying simple facingMode.", firstErr);
+          
+          // Attempt 2: Bypassing resolution filters entirely
+          try {
+            stream = await navigator.mediaDevices.getUserMedia({
+              video: { facingMode: 'user' },
+              audio: false
+            });
+          } catch (secondErr) {
+            console.warn("Attempt 2 with facingMode constraints failed. Trying bare minimum video capability.", secondErr);
+            
+            // Attempt 3: Bare minimum raw video stream (let browser choose default lens)
+            stream = await navigator.mediaDevices.getUserMedia({
+              video: true,
+              audio: false
+            });
+          }
         }
-        setStreamActive(true);
+
+        if (stream) {
+          streamRef.current = stream;
+          if (videoRef.current) {
+            videoRef.current.srcObject = stream;
+            
+            // Explicitly trigger focus play. This is critical on iOS Safari where energy saver caps playback speed or blocks autoplays.
+            try {
+              await videoRef.current.play();
+            } catch (playErr) {
+              console.warn("Video autoplay requested manual touch-start confirmation or was loaded inline:", playErr);
+            }
+          }
+          setStreamActive(true);
+        } else {
+          setCameraError("Camera capture interface returned an empty stream.");
+        }
       } else {
         setCameraError("Camera capture interface not supported on this browser.");
       }
     } catch (err: any) {
-      console.error("Camera access failed", err);
-      setCameraError("Access declined. Using preloaded high-fidelity portrait for vibe checking!");
+      console.error("Camera access failed collectively", err);
+      const errMsg = err?.message || String(err);
+      if (
+        errMsg.includes("Requested device not found") || 
+        err?.name === "NotFoundError" || 
+        errMsg.includes("DevicesNotSupported") ||
+        errMsg.includes("OverconstrainedError")
+      ) {
+        setCameraError("No physical webcam found. Enabling premium Aura Simulated Lens instead!");
+      } else {
+        setCameraError("Camera device was not accessible. Enabling premium Aura Simulated Lens instead!");
+      }
     }
   };
 
@@ -197,9 +247,15 @@ export function VibeCheckGame({ onSaveDecision }: VibeCheckGameProps) {
                 className="w-full h-full object-cover scale-x-[-1]"
               />
             ) : (
-              <div className="text-center px-4">
-                <p className="text-[10px] text-neutral-400 font-sans mb-1">Webcam initializing...</p>
-                <div className="w-8 h-8 border-2 border-t-primary border-neutral-700 rounded-full animate-spin mx-auto"></div>
+              <div className="absolute inset-0 bg-gradient-to-tr from-[#131131] via-[#200d3d] to-[#070b18] flex flex-col items-center justify-center text-center p-6 text-white">
+                <Sparkles className="w-8 h-8 text-pink-400 animate-pulse mb-2" />
+                <span className="text-[10px] font-bold tracking-widest uppercase text-pink-300">Cosmic Lens Active</span>
+                <p className="text-[9px] text-neutral-300 font-sans mt-2 max-w-[190px] leading-relaxed">
+                  {cameraError ? "Hardware scanner offline. Press button below to capture standard high-fidelity portrait." : "Seeking biometric laser connection to personal webcam..."}
+                </p>
+                {!cameraError && (
+                  <div className="w-4 h-4 border-2 border-t-pink-400 border-white/20 rounded-full animate-spin mt-3"></div>
+                )}
               </div>
             )}
 

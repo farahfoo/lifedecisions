@@ -31,6 +31,119 @@ function getAiClient(): GoogleGenAI | null {
   return aiClient;
 }
 
+// Helper function to build dynamic fallback options when Gemini API is unavailable or blocked (e.g., leaked key)
+function generateFallbackOptions(promptType: string, numCount: number): string[] {
+  const rawText = (promptType || "").toLowerCase();
+  
+  if (rawText.includes("dinner") || rawText.includes("food") || rawText.includes("eat") || rawText.includes("meal") || rawText.includes("lunch")) {
+    return [
+      'Grab Crispy Tacos 🌮',
+      'Order Fresh Sushi 🍣',
+      'Sizzle some Burgers 🍔',
+      'Cook Creamy Italian Pastas 🍝',
+      'Healthy Green Bowl 🥗',
+      'Wood-fired Pizza 🍕',
+      'Spicy Thai Curry 🍛'
+    ].slice(0, numCount);
+  }
+  
+  if (rawText.includes("movie") || rawText.includes("watch") || rawText.includes("film")) {
+    return [
+      'Mind-bending Sci-Fi 🚀',
+      'Classic Cozy Comedy 🍿',
+      'Nail-biting Thriller 🕵️',
+      'Indie Romance Film 🎬',
+      'Action Blockbuster 💥',
+      'Inspiring Documentary 🌍'
+    ].slice(0, numCount);
+  }
+
+  if (rawText.includes("activity") || rawText.includes("weekend") || rawText.includes("do") || rawText.includes("hobby") || rawText.includes("fun")) {
+    return [
+      'Re-read cozy comfort book 📚',
+      'Explore local forest trails 🌲',
+      'Bake yummy homemade pastries 🥐',
+      'Intensive gaming marathon 🎮',
+      'Declutter the study room 🧹',
+      'Doodle with colorful watercolors 🎨'
+    ].slice(0, numCount);
+  }
+
+  // Generic fallback options using the input prompt directly
+  const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
+  const cleanPrompt = (promptType || "Option").replace(/[^a-zA-Z0-9 ]/g, '').trim();
+  const baseLabel = cleanPrompt ? capitalize(cleanPrompt) : "Decision";
+
+  return [
+    `Go with ${baseLabel} Alpha 🎯`,
+    `Do ${baseLabel} Beta 💫`,
+    `Opt for ${baseLabel} Gamma 🔮`,
+    `Rest & clear your thoughts 💤`,
+    `Plan a fresh new agenda ✨`
+  ].slice(0, numCount);
+}
+
+// Helper function to build dynamic, context-driven alibi replies when Gemini is blocked
+function generateFallbackTexts(scenario: string): string[] {
+  const rawText = (scenario || "").toLowerCase();
+  
+  // Clean first few words for fallback keyphrase usage
+  const words = (scenario || "").split(/\s+/).filter(Boolean);
+  const keyPhrase = words.slice(0, 3).join(' ') || "this situation";
+
+  // Case 1: Gym / workout / training / sports / legs
+  if (rawText.includes("gym") || rawText.includes("workout") || rawText.includes("training") || rawText.includes("sport") || rawText.includes("run") || rawText.includes("legs")) {
+    return [
+      "Hey! Skip-day vibes are real. Totally wiped today so I'll pass, but crush those personal records for me! 💪",
+      "I'm sitting today's training session out to recharge. Let's aim for another day next week. Appreciate you!",
+      "Emergency alert: My warm blanket has declared martial law. Leg day will have to survive without me! 🛌"
+    ];
+  }
+  
+  // Case 2: Concert / party / plans / play / gig / club / drink / dinner / food / pub / bar
+  if (rawText.includes("concert") || rawText.includes("party") || rawText.includes("drink") || rawText.includes("dinner") || rawText.includes("food") || rawText.includes("beer") || rawText.includes("eat") || rawText.includes("out") || rawText.includes("club") || rawText.includes("bar")) {
+    return [
+      "Aw, I wish I could make it tonight! My battery is completely flat and I need a quiet night in. Have a spectacular time! ⭐",
+      "I'm skipping the social plans tonight to rest up on the couch. Let's touch base next week for a nice raincheck!",
+      "My social battery is currently at 1% and someone hid my charger. Rock out twice as hard on my behalf! 🔋"
+    ];
+  }
+
+  // Case 3: Work / file / manager / boss / task / morning / weekend / audit / Saturday / Sunday / office
+  if (rawText.includes("work") || rawText.includes("file") || rawText.includes("boss") || rawText.includes("manager") || rawText.includes("task") || rawText.includes("office") || rawText.includes("check") || rawText.includes("job") || rawText.includes("urgent")) {
+    return [
+      "Hey! I can take a extremely quick peek around 11:00 AM, but I will be off-grid for most of the weekend! 📱",
+      "I will review these requested files fully first thing on Monday morning when regular business hours resume.",
+      "Error 404: Saturday or Sunday work capability not found. Let's definitely conquer this Monday morning! ☕"
+    ];
+  }
+
+  // Case 4: Date / coffee / dating / romance / sparks / heart
+  if (rawText.includes("date") || rawText.includes("coffee") || rawText.includes("crush") || rawText.includes("meet") || rawText.includes("spark") || rawText.includes("partner")) {
+    return [
+      "Hey! Just wanted to say I had a wonderful time yesterday. Let's grab tea or coffee again soon! ☕",
+      "Thank you for the magnificent evening! I enjoyed the chat, but I think our connection is better as direct friends rather than romantically. Take care!",
+      "My coffee yesterday was 10/10, but the conversation was easily an 11/10. Let's repeat that soon! 😄"
+    ];
+  }
+
+  // Case 5: Relationship split/group dinner billing dispute
+  if (rawText.includes("bill") || rawText.includes("split") || rawText.includes("pay") || rawText.includes("share") || rawText.includes("money") || rawText.includes("water")) {
+    return [
+      "Hey guys! Dinner was so fun! Since I stuck to water and skipped the heavy mains this time, do you mind if I just throw in $15 for my slice? 💧",
+      "I'd prefer to just pay for what I personally ordered tonight to keep it fair for my budget. Thanks so much!",
+      "Unless tap water has suddenly gone up to hyper-inflation prices, I'll pay for my own water glass and let you guys split the wagyu! 😂"
+    ];
+  }
+
+  // Generic case
+  return [
+    `Hey! Regarding "${keyPhrase}"... I'm extremely swamped right now and need to sit this out, but let's connect soon! 🙌`,
+    `I cannot commit to "${keyPhrase}" at this moment. Let me review my calendar and follow up next week. Thanks!`,
+    `My current status is set to: "Busy investigating the ultimate cosmic mysteries of ${keyPhrase}" (sleeping on the sofa). 🚀`
+  ];
+}
+
 // REST API route for options generation (e.g. food, generic choices)
 app.post('/api/gemini/options', async (req, res) => {
   const { promptType, count } = req.body;
@@ -39,15 +152,8 @@ app.post('/api/gemini/options', async (req, res) => {
   const client = getAiClient();
   if (!client) {
     // If no client available, return standard options fallback instantly
-    return res.json({
-      options: [
-        'Grab Tacos 🌮',
-        'Order Sushi 🍣',
-        'Have Burgers 🍔5',
-        'Cook Italian 🍝',
-        'Green Salad 🥗'
-      ]
-    });
+    const localOptions = generateFallbackOptions(promptType, numCount);
+    return res.json({ options: localOptions });
   }
 
   try {
@@ -77,8 +183,13 @@ app.post('/api/gemini/options', async (req, res) => {
     const parsed = JSON.parse(jsonText.trim());
     res.json(parsed);
   } catch (error: any) {
-    console.error('Gemini options error', error);
-    res.status(500).json({ error: 'Completions failed', options: ['Order Pizza 🍕', 'Make Salads 🥗'] });
+    console.error('Gemini options error intercepted:', error);
+    // Beautiful dynamic fallback values if key is leaked, rate-limited, or unauthorized.
+    const dynamicFallback = generateFallbackOptions(promptType, numCount);
+    res.json({
+      options: dynamicFallback,
+      warning: "Gemini API key is blocked or leaked. Showing custom context-driven offline options."
+    });
   }
 });
 
@@ -88,13 +199,8 @@ app.post('/api/gemini/texts', async (req, res) => {
 
   const client = getAiClient();
   if (!client) {
-    return res.json({
-      texts: [
-        "Hey! Wish I could make it but I'm completely wiped out. Enjoy! 😴",
-        "Really wish I could go but I have to catch up on sleep tonight. Let's hang soon!",
-        "Low battery alert! Tucking myself in with hot herbal tea. Have massive fun! 🔋"
-      ]
-    });
+    const defaultTexts = generateFallbackTexts(scenario);
+    return res.json({ texts: defaultTexts });
   }
 
   try {
@@ -128,8 +234,13 @@ Keep them short, relatable, with zero awkward structures. Response MUST be in JS
     const parsed = JSON.parse(jsonText.trim());
     res.json(parsed);
   } catch (error: any) {
-    console.error('Gemini text error', error);
-    res.status(500).json({ error: 'Text composition failed' });
+    console.error('Gemini text error intercepted:', error);
+    // Beautiful dynamic fallback values if key is leaked, rate-limited, or unauthorized.
+    const dynamicFallback = generateFallbackTexts(scenario);
+    res.json({
+      texts: dynamicFallback,
+      warning: "Gemini API key is blocked or leaked. Showing custom context-driven offline options."
+    });
   }
 });
 

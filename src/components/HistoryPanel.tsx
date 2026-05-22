@@ -29,7 +29,7 @@ export function HistoryPanel({ history, onClearHistory, onSelectGame }: HistoryP
       case 'flower': return 'Magic Flower Daisy';
       case 'poll': return 'Lunch Roulette';
       case 'vibe': return 'Vibe Scanner';
-      case 'text': return 'Chat Sparker';
+      case 'text': return 'Excuse-o-Matic';
       default: return 'Lucky spark';
     }
   };

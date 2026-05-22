@@ -26,6 +26,7 @@ import { LunchPollGame } from './components/LunchPollGame';
 import { TextTellGame } from './components/TextTellGame';
 import { HistoryPanel } from './components/HistoryPanel';
 import { ProfileLayout } from './components/ProfileLayout';
+import { supabase } from './lib/supabase';
 
 export default function App() {
   const [activeScreen, setActiveScreen] = useState<GameType>('dashboard');
@@ -33,47 +34,123 @@ export default function App() {
   const [history, setHistory] = useState<DecisionHistoryEntry[]>([]);
   const [aiLoading, setAiLoading] = useState(false);
 
-  // Load history from localStorage on mount
+  // Load initial history from Supabase on mount and bind to live channel events
   useEffect(() => {
-    try {
-      const stored = localStorage.getItem('decision_studio_history_v1');
-      if (stored) {
-        setHistory(JSON.parse(stored));
+    const fetchInitialHistory = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('entries')
+          .select('*');
+        if (error) {
+          console.error("Error fetching Supabase entries:", error);
+          return;
+        }
+        if (data) {
+          const sorted = [...data].sort((a, b) => {
+            if (a.created_at && b.created_at) {
+              return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+            }
+            return String(b.id || '').localeCompare(String(a.id || ''));
+          });
+          setHistory(sorted);
+        }
+      } catch (err) {
+        console.error("Failed to load initial history from Supabase:", err);
       }
-    } catch (e) {
-      console.error("Could not parse local history", e);
-    }
+    };
+
+    fetchInitialHistory();
+
+    const channel = supabase
+      .channel('entries-realtime-changes')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'entries' },
+        (payload) => {
+          if (payload.eventType === 'INSERT') {
+            const newEntry = payload.new as DecisionHistoryEntry;
+            setHistory((prev) => {
+              if (prev.some((item) => item.id === newEntry.id)) {
+                return prev;
+              }
+              return [newEntry, ...prev];
+            });
+          } else if (payload.eventType === 'DELETE') {
+            const oldId = payload.old?.id;
+            if (oldId) {
+              setHistory((prev) => prev.filter((item) => item.id !== oldId));
+            }
+          } else if (payload.eventType === 'UPDATE') {
+            const updatedEntry = payload.new as DecisionHistoryEntry;
+            setHistory((prev) =>
+              prev.map((item) => (item.id === updatedEntry.id ? updatedEntry : item))
+            );
+          }
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, []);
 
-  // Sync back to localStorage when history shifts
-  const saveHistory = (newList: DecisionHistoryEntry[]) => {
-    setHistory(newList);
-    try {
-      localStorage.setItem('decision_studio_history_v1', JSON.stringify(newList));
-    } catch (e) {
-      console.error("Could not write history to local storage", e);
-    }
-  };
-
-  const handleSaveDecision = (entry: Omit<DecisionHistoryEntry, 'id' | 'timestamp'>) => {
+  const handleSaveDecision = async (entry: Omit<DecisionHistoryEntry, 'id' | 'timestamp'>) => {
     const formattedEntry: DecisionHistoryEntry = {
       ...entry,
       id: crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substring(2, 9),
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
     };
-    const updated = [formattedEntry, ...history];
-    saveHistory(updated);
+
+    // Optimistic UI update: Prepend locally first for standard snappy response
+    setHistory((prev) => {
+      if (prev.some((item) => item.id === formattedEntry.id)) return prev;
+      return [formattedEntry, ...prev];
+    });
+
+    try {
+      const { error } = await supabase
+        .from('entries')
+        .insert([formattedEntry]);
+      if (error) {
+        console.error("Error saving decision to Supabase:", error);
+      }
+    } catch (err) {
+      console.error("Supabase write exception:", err);
+    }
   };
 
-  const handleClearHistory = () => {
-    saveHistory([]);
-  };
-
-  const handleClearAllUserData = () => {
+  const handleClearHistory = async () => {
     setHistory([]);
-    localStorage.removeItem('decision_studio_history_v1');
-    setActiveScreen('dashboard');
+    try {
+      const { error } = await supabase
+        .from('entries')
+        .delete()
+        .neq('id', '_none_');
+      if (error) {
+        console.error("Error deleting entries in Supabase:", error);
+      }
+    } catch (err) {
+      console.error("Supabase clear exception:", err);
+    }
   };
+
+  const handleClearAllUserData = async () => {
+    setHistory([]);
+    setActiveScreen('dashboard');
+    try {
+      const { error } = await supabase
+        .from('entries')
+        .delete()
+        .neq('id', '_none_');
+      if (error) {
+        console.error("Error clearing table data in Supabase:", error);
+      }
+    } catch (err) {
+      console.error("Supabase clear all user exception:", err);
+    }
+  };
+
 
   // Call server-side helper for Gemini completions
   const handleRequestAiSuggestions = async (promptType: string, count: number): Promise<string[]> => {
@@ -149,10 +226,10 @@ export default function App() {
     },
     {
       id: 'text',
-      title: 'Chat',
+      title: 'Excuse',
       desc: 'For drafting witty message replies.',
       icon: '💬',
-      tag: 'Chat'
+      tag: 'Excuse'
     },
     {
       id: 'vibe',
